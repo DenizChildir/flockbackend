@@ -15,7 +15,7 @@ public class App {
         //dao.createTables();
         Dao sl =new Dao();
 
-        System.out.println(dao.convertTweetsToStrings(dao.getAllTweets()));
+        //System.out.println(dao.convertTweetsToStrings(dao.getAllTweets()));
         SpringApplication.run(App.class, args);
 
     }

@@ -89,6 +89,4 @@ public class Tweet {
         this.id = id;
     }
 
-
-
 }

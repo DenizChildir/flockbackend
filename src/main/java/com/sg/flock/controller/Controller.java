@@ -14,14 +14,11 @@ import com.sg.flock.dto.Tweet;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 ;
-import com.sg.flock.service.ReplyValidationException;
 import com.sg.flock.service.TweetValidationException;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,13 +36,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/posts")
 public class Controller {
     /*
       @Autowired
       FlockDao dao;
       */
-    Dao sl=new Dao();
+    Dao dao =new Dao();
 
 //    @PostMapping("/posts")
 //    @ResponseStatus(HttpStatus.CREATED)
@@ -55,7 +52,7 @@ public class Controller {
 
 
 
-    @PostMapping("/posts")
+    @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     public void createPost(@RequestBody String input) throws TweetValidationException, JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
@@ -76,37 +73,46 @@ public class Controller {
         dao.insertTweet(tweet);
     }
 
-    @PostMapping("/replies")
-    public void createReply(@RequestBody Reply reply) throws  ReplyValidationException {
-        // Perform validation checks on the tweet object
-        if (reply.getPost() == null || reply.getPost().isEmpty()) {
-            throw new ReplyValidationException("reply message cannot be empty");
-        }
-        if (reply.getPost().length() > 280) {
-            throw new ReplyValidationException("reply message length cannot exceed 280 characters");
-        }
 
-        // Insert the tweet into the database
-        sl.insertReply(reply);
-    }
 
-    @GetMapping("/posts")
-    public List<Tweet> getAllPosts(){
+//    @GetMapping("")
+//    public List<Tweet> getAllPosts(){
+//        System.out.println(sl.getAllTweets());
+//       // return sl.convertTweetsToStrings(sl.getAllTweets());
+//        List ret =sl.getAllTweets();
+//        Collections.reverse(ret);
+//        return ret;
+//    }
+
+    @GetMapping("")
+    public List getAllPosts(){
+        /*
         System.out.println(sl.getAllTweets());
-       // return sl.convertTweetsToStrings(sl.getAllTweets());
+        // return sl.convertTweetsToStrings(sl.getAllTweets());
         List ret =sl.getAllTweets();
         Collections.reverse(ret);
-        return ret;
+        //System.out.println(ret.toString().toString());
+        final Logger logger = LoggerFactory.getLogger(Controller.class);
+        logger.debug("Sending myObject: {}", ret);
+         */
+        return dao.getAllTweets2();
     }
 
-    @GetMapping("/replies/{tweetId}")
-    public List<Reply> getAllReplies(@PathVariable("tweetId") int tweetId) {
-        return sl.getRepliesForTweetId(tweetId);
+    @PostMapping("/{postId}/replies")
+    public void createReply(@PathVariable int postId, @RequestBody Reply reply) {
+        dao.insertReply(reply);
     }
 
-    @GetMapping("/posts/{tweetId}")
-    public Tweet getTweetById(@PathVariable("tweetId") int tweetId)  {
-
-        return sl.getTweetById(tweetId);
+    private void printReplyToConsole(Reply reply) {
+        System.out.println("Reply details:");
+        System.out.println("ID: " + reply.getId());
+        System.out.println("Post ID: " + reply.getPostId());
+        System.out.println("User Name: " + reply.getUserName());
+        System.out.println("Title: " + reply.getTitle());
+        System.out.println("Post Text: " + reply.getPostText());
+        System.out.println("Image: " + reply.getImage());
+        System.out.println("Date: " + reply.getDate());
     }
+
+
 }

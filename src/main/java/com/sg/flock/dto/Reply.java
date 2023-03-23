@@ -9,20 +9,20 @@ public class Reply {
         this.id = id;
     }
 
-    public int getTweet_id() {
-        return tweet_id;
+    public int getPostId() {
+        return PostId;
     }
 
     public void setTweetId(int tweet_id) {
-        this.tweet_id = tweet_id;
+        this.PostId = tweet_id;
     }
 
     public String getUserName() {
-        return user_name;
+        return userName;
     }
 
     public void setUserName(String user_name) {
-        this.user_name = user_name;
+        this.userName = user_name;
     }
 
     public String getTitle() {
@@ -33,20 +33,20 @@ public class Reply {
         this.title = title;
     }
 
-    public String getPost() {
-        return post;
+    public String getPostText() {
+        return postText;
     }
 
-    public void setPost(String post) {
-        this.post = post;
+    public void setPostText(String postText) {
+        this.postText = postText;
     }
 
-    public String getImg() {
-        return img;
+    public String getImage() {
+        return image;
     }
 
-    public void setImg(String img) {
-        this.img = img;
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public String getDate() {
@@ -58,11 +58,11 @@ public class Reply {
     }
 
     int id;
-    int tweet_id;
-    String user_name;
+    int PostId;
+    String userName;
     String title;
-    String post;
-    String img;
+    String postText;
+    String image;
     String date;
 
 }

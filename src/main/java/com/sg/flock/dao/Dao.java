@@ -61,19 +61,105 @@ public class Dao {
 
         System.out.println("Tables created successfully.");
     }
+    public List<Tweet> getAllTweets2() {
+        String tweetsSql = "SELECT * FROM tweet";
+        String repliesSql = "SELECT * FROM reply WHERE tweet_id = ?";
+
+        List<Tweet> tweets = jdbcTemplate.query(tweetsSql, new RowMapper<Tweet>() {
+            @Override
+            public Tweet mapRow(ResultSet rs, int rowNum) throws SQLException {
+                int id = rs.getInt("id");
+                String userName = rs.getString("user_name");
+                String title = rs.getString("title");
+                String post = rs.getString("post");
+                String image = rs.getString("img");
+                String date = rs.getString("date");
+
+                List<Reply> replies = jdbcTemplate.query(repliesSql, new Object[]{id}, new RowMapper<Reply>() {
+                    @Override
+                    public Reply mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        Reply reply = new Reply();
+                        reply.setId(rs.getInt("id"));
+                        reply.setTweetId(rs.getInt("tweet_id"));
+                        reply.setUserName(rs.getString("user_name"));
+                        reply.setTitle(rs.getString("title"));
+                        reply.setPostText(rs.getString("post"));
+                        reply.setImage(rs.getString("img"));
+                        reply.setDate(rs.getString("date"));
+                        return reply;
+                    }
+                });
+
+                return new Tweet(id, userName, title, post, image, date, new LinkedList<>(replies));
+            }
+        });
+
+        return tweets;
+    }
+
+
+    public List<Tweet> getTweetsWithReplies() {
+        String sql = "SELECT * FROM tweet t LEFT JOIN reply r ON t.id = r.tweet_id ORDER BY t.id, r.id";
+        List<Tweet> tweets = new LinkedList<>();
+
+        jdbcTemplate.query(sql, (ResultSet rs) -> {
+            int currentTweetId = 0;
+            Tweet currentTweet = null;
+            List<Reply> currentReplies = null;
+
+            while (rs.next()) {
+                int tweetId = rs.getInt("t.id");
+                if (tweetId != currentTweetId) {
+                    // We've moved on to a new tweet, so add the previous tweet to the list
+                    if (currentTweet != null) {
+                        currentTweet.setReplies((LinkedList<Reply>) currentReplies);
+                        tweets.add(currentTweet);
+                    }
+                    // Create a new tweet object for the current row
+                    currentTweet = new Tweet();
+                    currentTweet.setId(tweetId);
+                    currentTweet.setUserName(rs.getString("t.user_name"));
+                    currentTweet.setTitle(rs.getString("t.title"));
+                    currentTweet.setPost(rs.getString("t.post"));
+                    currentTweet.setImage(rs.getString("t.img"));
+                    currentTweet.setDate(rs.getString("t.date"));
+
+                    // Create a new list to hold the replies for this tweet
+                    currentReplies = new LinkedList<>();
+                    currentTweetId = tweetId;
+                }
+                // If there is a reply for this row, add it to the current list of replies
+                if (rs.getInt("r.id") != 0) {
+                    Reply reply = new Reply();
+                    reply.setId(rs.getInt("r.id"));
+                    reply.setTweetId(rs.getInt("r.tweet_id"));
+                    reply.setUserName(rs.getString("r.user_name"));
+                    reply.setTitle(rs.getString("r.title"));
+                    reply.setPostText(rs.getString("r.post"));
+                    reply.setImage(rs.getString("r.img"));
+                    reply.setDate(rs.getString("r.date"));
+                    currentReplies.add(reply);
+                }
+            }
+            // Add the last tweet to the list
+            if (currentTweet != null) {
+                currentTweet.setReplies((LinkedList<Reply>) currentReplies);
+                tweets.add(currentTweet);
+            }
+        });
+        return tweets;
+    }
 
 
     public void insertTweet(Tweet tweet) {
         String insertTweetSql = "INSERT INTO `mydb`.`tweet` (`user_name`, `title`, `post`, `img`, `date`) VALUES (?, ?, ?, ?, ?)";
-        System.out.println(tweet.getUserName()+" "+tweet.getTitle()+" "+tweet.getPost()+" "+tweet.getImage()+" "+tweet.getDate() +"xxxxxxxxxxxxx");
         jdbcTemplate.update(insertTweetSql, tweet.getUserName(), tweet.getTitle(), tweet.getPost(), tweet.getImage(), tweet.getDate());
     }
 
 
     public void insertReply(Reply reply){
         String sql = "INSERT INTO reply (tweet_id, user_name, title, post, img, date) VALUES (?, ?, ?, ?, ?, ?)";
-        System.out.println(reply.getTweet_id()+" "+reply.getUserName()+" "+reply.getTitle()+" "+reply.getPost()+" "+reply.getImg()+" "+reply.getDate());
-        jdbcTemplate.update(sql, reply.getTweet_id(), reply.getUserName(), reply.getTitle(), reply.getPost(), reply.getImg(), reply.getDate());
+        jdbcTemplate.update(sql, reply.getPostId(), reply.getUserName(), reply.getTitle(), reply.getPostText(), reply.getImage(), reply.getDate());
     }
     /*
         public void insertReply(int tweetId, String userName, String title, String post, String img, String date) {
@@ -131,65 +217,15 @@ public class Dao {
                 reply.setTweetId(rs.getInt("tweet_id"));
                 reply.setUserName(rs.getString("user_name"));
                 reply.setTitle(rs.getString("title"));
-                reply.setPost(rs.getString("post"));
-                reply.setImg(rs.getString("img"));
+                reply.setPostText(rs.getString("post"));
+                reply.setImage(rs.getString("img"));
                 reply.setDate(rs.getString("date"));
                 return reply;
             }
         });
         return replies;
     }
-    public List<Tweet> getTweetsWithReplies() {
-        String sql = "SELECT * FROM tweet t LEFT JOIN reply r ON t.id = r.tweet_id ORDER BY t.id, r.id";
-        List<Tweet> tweets = new LinkedList<>();
 
-        jdbcTemplate.query(sql, (ResultSet rs) -> {
-            int currentTweetId = 0;
-            Tweet currentTweet = null;
-            List<Reply> currentReplies = null;
-
-            while (rs.next()) {
-                int tweetId = rs.getInt("t.id");
-                if (tweetId != currentTweetId) {
-                    // We've moved on to a new tweet, so add the previous tweet to the list
-                    if (currentTweet != null) {
-                        currentTweet.setReplies((LinkedList<Reply>) currentReplies);
-                        tweets.add(currentTweet);
-                    }
-                    // Create a new tweet object for the current row
-                    currentTweet = new Tweet();
-                    currentTweet.setId(tweetId);
-                    currentTweet.setUserName(rs.getString("t.user_name"));
-                    currentTweet.setTitle(rs.getString("t.title"));
-                    currentTweet.setPost(rs.getString("t.post"));
-                    currentTweet.setImage(rs.getString("t.img"));
-                    currentTweet.setDate(rs.getString("t.date"));
-
-                    // Create a new list to hold the replies for this tweet
-                    currentReplies = new LinkedList<>();
-                    currentTweetId = tweetId;
-                }
-                // If there is a reply for this row, add it to the current list of replies
-                if (rs.getInt("r.id") != 0) {
-                    Reply reply = new Reply();
-                    reply.setId(rs.getInt("r.id"));
-                    reply.setTweetId(rs.getInt("r.tweet_id"));
-                    reply.setUserName(rs.getString("r.user_name"));
-                    reply.setTitle(rs.getString("r.title"));
-                    reply.setPost(rs.getString("r.post"));
-                    reply.setImg(rs.getString("r.img"));
-                    reply.setDate(rs.getString("r.date"));
-                    currentReplies.add(reply);
-                }
-            }
-            // Add the last tweet to the list
-            if (currentTweet != null) {
-                currentTweet.setReplies((LinkedList<Reply>) currentReplies);
-                tweets.add(currentTweet);
-            }
-        });
-        return tweets;
-    }
     public String convertTweetsToStrings(List<Tweet> tweets) {
         List<String> strings = new LinkedList<>();
 
@@ -209,8 +245,8 @@ public class Dao {
                 for (Reply reply : replies) {
                     sb.append(String.format("\t[%d] %s - %s\n", reply.getId(), reply.getUserName(), reply.getDate()));
                     sb.append(String.format("\t%s\n", reply.getTitle()));
-                    sb.append(String.format("\t%s\n", reply.getPost()));
-                    sb.append(String.format("\t%s\n", reply.getImg()));
+                    sb.append(String.format("\t%s\n", reply.getPostText()));
+                    sb.append(String.format("\t%s\n", reply.getImage()));
                 }
             }
             // Add the complete tweet (with replies) to the list of strings
