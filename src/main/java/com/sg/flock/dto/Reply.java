@@ -1,5 +1,8 @@
 package com.sg.flock.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+
 public class Reply {
     public int getId() {
         return id;
@@ -9,20 +12,20 @@ public class Reply {
         this.id = id;
     }
 
-    public int getPostId() {
-        return PostId;
+    public int getTweet_id() {
+        return tweet_id;
     }
 
     public void setTweetId(int tweet_id) {
-        this.PostId = tweet_id;
+        this.tweet_id = tweet_id;
     }
 
     public String getUserName() {
-        return userName;
+        return user_name;
     }
 
     public void setUserName(String user_name) {
-        this.userName = user_name;
+        this.user_name = user_name;
     }
 
     public String getTitle() {
@@ -33,20 +36,20 @@ public class Reply {
         this.title = title;
     }
 
-    public String getPostText() {
-        return postText;
+    public String getPost() {
+        return post;
     }
 
-    public void setPostText(String postText) {
-        this.postText = postText;
+    public void setPost(String post) {
+        this.post = post;
     }
 
-    public String getImage() {
-        return image;
+    public String getImg() {
+        return img;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setImg(String img) {
+        this.img = img;
     }
 
     public String getDate() {
@@ -57,12 +60,19 @@ public class Reply {
         this.date = date;
     }
 
+    @JsonProperty("id")
     int id;
-    int PostId;
-    String userName;
+    @JsonProperty("tweet_id")
+    int tweet_id;
+    @JsonProperty("user_name")
+    String user_name;
+    @JsonProperty("title")
     String title;
-    String postText;
-    String image;
+    @JsonProperty("post")
+    String post;
+    @JsonProperty("img")
+    String img;
+    @JsonProperty("date")
     String date;
 
 }

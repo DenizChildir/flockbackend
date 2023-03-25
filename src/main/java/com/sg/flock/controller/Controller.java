@@ -14,27 +14,23 @@ import com.sg.flock.dto.Tweet;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 ;
+import com.sg.flock.service.InvalidTweetIdException;
+import com.sg.flock.service.ReplyValidationException;
 import com.sg.flock.service.TweetValidationException;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  *
  * @author nicho
  */
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:3111")
 @RestController
 @RequestMapping("/api/posts")
 public class Controller {
@@ -42,7 +38,7 @@ public class Controller {
       @Autowired
       FlockDao dao;
       */
-    Dao dao =new Dao();
+    Dao sl =new Dao();
 
 //    @PostMapping("/posts")
 //    @ResponseStatus(HttpStatus.CREATED)
@@ -52,67 +48,82 @@ public class Controller {
 
 
 
-    @PostMapping("")
+    @PostMapping("/posts")
     @ResponseStatus(HttpStatus.CREATED)
-    public void createPost(@RequestBody String input) throws TweetValidationException, JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
+    public void createPost(@RequestBody Tweet tweet) {
 
-        // Use the readValue() method to parse the input string into a Map object
-        Map<String, Object> map = mapper.readValue(input, new TypeReference<Map<String, Object>>() {});
+            // Insert the tweet into the database
+            sl.insertTweet(tweet);
+            // Emit a 'newTweet' event to all connected clients
+           // socketIOServer.getBroadcastOperations().sendEvent("newTweet", tweet);
 
-        // Extract the values of all properties from the Map and add them to a List
-
-        List<String> values = new ArrayList<>();
-        for (Object value : map.values()) {
-            values.add(String.valueOf(value));
-        }
-        int id= Integer.parseInt(values.get(0));String name=values.get(1),title=values.get(2),
-                body=values.get(3),img=values.get(4),date= String.valueOf(LocalDate.now());
-        Tweet tweet=new Tweet(id,name,title,body,img,date,null);
-        Dao dao=new Dao();
-        dao.insertTweet(tweet);
     }
 
+    @PostMapping("/replies")
+    public void createReply(@RequestBody Reply reply)  {
 
+            sl.insertReply(reply);
 
-//    @GetMapping("")
-//    public List<Tweet> getAllPosts(){
-//        System.out.println(sl.getAllTweets());
-//       // return sl.convertTweetsToStrings(sl.getAllTweets());
-//        List ret =sl.getAllTweets();
-//        Collections.reverse(ret);
-//        return ret;
-//    }
+    }
 
-    @GetMapping("")
-    public List getAllPosts(){
-        /*
-        System.out.println(sl.getAllTweets());
-        // return sl.convertTweetsToStrings(sl.getAllTweets());
-        List ret =sl.getAllTweets();
+    @GetMapping("/posts")
+    public List<Tweet> getAllPosts()  {
+        List<Tweet> ret = sl.getAllTweets();
         Collections.reverse(ret);
-        //System.out.println(ret.toString().toString());
-        final Logger logger = LoggerFactory.getLogger(Controller.class);
-        logger.debug("Sending myObject: {}", ret);
-         */
-        return dao.getAllTweets2();
+        return ret;
     }
 
-    @PostMapping("/{postId}/replies")
-    public void createReply(@PathVariable int postId, @RequestBody Reply reply) {
-        dao.insertReply(reply);
+    @GetMapping("/replies/{tweetId}")
+    public List<Reply> getAllReplies(@PathVariable("tweetId") int tweetId)  {
+
+            return sl.getRepliesForTweetId(tweetId);
     }
 
-    private void printReplyToConsole(Reply reply) {
-        System.out.println("Reply details:");
-        System.out.println("ID: " + reply.getId());
-        System.out.println("Post ID: " + reply.getPostId());
-        System.out.println("User Name: " + reply.getUserName());
-        System.out.println("Title: " + reply.getTitle());
-        System.out.println("Post Text: " + reply.getPostText());
-        System.out.println("Image: " + reply.getImage());
-        System.out.println("Date: " + reply.getDate());
+    @GetMapping("/posts/{tweetId}")
+    public Tweet getTweetById(@PathVariable("tweetId") int tweetId)  {
+
+            return sl.getTweetById(tweetId);
+
     }
 
+    @GetMapping("/posts/name/{user_name}")
+    public List<Tweet> getTweetByUserName(@PathVariable ("user_name") String user_name){
 
+            return sl.getTweetByUserName(user_name);
+
+    }
+
+    @GetMapping("/replies/name/{user_name}")
+    public List<Reply> getReplyByUserName(@PathVariable ("user_name") String user_name)  {
+
+            return sl.getReplyByUserName(user_name);
+
+    }
+
+    @DeleteMapping("/posts/{tweetId}")
+    public void deleteTweetById(@PathVariable("tweetId") int tweetId) {
+
+            sl.deleteTweetById(tweetId);
+
+    }
+
+    @DeleteMapping("/replies/{tweetId}/{replyId}")
+    public void deleteReplyById(@PathVariable("tweetId") int tweetId, @PathVariable("replyId") int replyId)  {
+
+            sl.deleteReplyById(tweetId, replyId);
+
+    }
+
+    @PutMapping("/posts/{tweetId}")
+    public void editTweetById(@PathVariable("tweetId") int tweetId, @RequestBody Tweet tweet)  {
+
+            sl.editTweetById(tweetId, tweet);
+
+    }
+
+    @PutMapping("/replies/{tweetId}/{replyId}")
+    public void editReplyById(@PathVariable("tweetId") int tweetId, @PathVariable("replyId") int replyId, @RequestBody Reply reply)  {
+            sl.editReplyById(tweetId, replyId, reply);
+
+    }
 }

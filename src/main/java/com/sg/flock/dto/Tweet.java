@@ -1,36 +1,28 @@
 package com.sg.flock.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.sg.flock.dto.Reply;
+
 import java.util.LinkedList;
-import java.util.List;
 
 public class Tweet {
-    public int id;
-    public String userName;
-    public String title;
-    public String postText;
-    public String image;
-    public String date;
-    public LinkedList<Reply> replies;
 
-    public Tweet(int id, String userName, String title, String post, String image, String date, LinkedList<Reply> replies) {
-        this.id = id;
-        this.userName = userName;
-        this.title = title;
-        this.postText = post;
-        this.image = image;
-        this.date = date;
-        this.replies = replies;
-    }
-    public Tweet(String id, String userName, String title, String post, String image, String date, LinkedList<Reply> replies) {
-        this.id = Integer.parseInt(id);
-        this.userName = userName;
-        this.title = title;
-        this.postText = post;
-        this.image = image;
-        this.date = date;
-        this.replies = replies;
-    }
-    public Tweet(){}
+    @JsonProperty("id")
+    int id;
+    @JsonProperty("user_name")
+    String user_name;
+    @JsonProperty("title")
+    String title;
+    @JsonProperty("post")
+    String post;
+    @JsonProperty("img")
+    String img;
+    @JsonProperty("date")
+    String date;
+
+
+
+    LinkedList<Reply> replies=new LinkedList<>();
 
     public LinkedList<Reply> getReplies() {
         return replies;
@@ -41,12 +33,12 @@ public class Tweet {
     }
 
 
-    public String getUserName() {
-        return userName;
+    public String getUser_name() {
+        return user_name;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUser_name(String user_name) {
+        this.user_name = user_name;
     }
 
     public String getTitle() {
@@ -58,19 +50,19 @@ public class Tweet {
     }
 
     public String getPost() {
-        return postText;
+        return post;
     }
 
     public void setPost(String post) {
-        this.postText = post;
+        this.post = post;
     }
 
     public String getImage() {
-        return image;
+        return img;
     }
 
     public void setImage(String image) {
-        this.image = image;
+        this.img = image;
     }
 
     public String getDate() {
@@ -87,6 +79,14 @@ public class Tweet {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getImg() {
+        return img;
+    }
+
+    public void setImg(String img) {
+        this.img = img;
     }
 
 }
