@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.sg.flock.dao.Dao;
+import com.sg.flock.dao.DataPersistenceException;
 import com.sg.flock.dto.Reply;
 import com.sg.flock.dto.Tweet;
 
@@ -30,100 +31,83 @@ import org.springframework.web.bind.annotation.*;
  * @author nicho
  */
 
-@CrossOrigin(origins = "http://localhost:3111")
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
-@RequestMapping("/api/posts")
+@RequestMapping("/api")
 public class Controller {
-    /*
-      @Autowired
-      FlockDao dao;
-      */
+
     Dao sl =new Dao();
 
-//    @PostMapping("/posts")
-//    @ResponseStatus(HttpStatus.CREATED)
-//    public void createPost(@RequestBody String tweet) throws TweetValidationException, JsonProcessingException {
-//        System.out.println(tweet);
-//    }
+
 
 
 
     @PostMapping("/posts")
     @ResponseStatus(HttpStatus.CREATED)
-    public void createPost(@RequestBody Tweet tweet) {
-
-            // Insert the tweet into the database
-            sl.insertTweet(tweet);
-            // Emit a 'newTweet' event to all connected clients
-           // socketIOServer.getBroadcastOperations().sendEvent("newTweet", tweet);
-
+    public void createPost(@RequestBody Tweet tweet) throws DataPersistenceException, TweetValidationException {
+        // Insert the tweet into the database
+        sl.insertTweet(tweet);
     }
 
     @PostMapping("/replies")
-    public void createReply(@RequestBody Reply reply)  {
+    public void createReply(@RequestBody Reply reply) throws DataPersistenceException, ReplyValidationException {
+        // Perform validation checks on the tweet object
+//        if (reply.getPost() == null || reply.getPost().isEmpty()) {
+//            throw new ReplyValidationException("reply message cannot be empty");
+//        }
+//        if (reply.getPost().length() > 280) {
+//            throw new ReplyValidationException("reply message length cannot exceed 280 characters");
+//        }
 
-            sl.insertReply(reply);
-
+        // Insert the tweet into the database
+        sl.insertReply(reply);
     }
 
     @GetMapping("/posts")
-    public List<Tweet> getAllPosts()  {
+    public List<Tweet> getAllPosts() throws DataPersistenceException {
         List<Tweet> ret = sl.getAllTweets();
         Collections.reverse(ret);
         return ret;
     }
 
     @GetMapping("/replies/{tweetId}")
-    public List<Reply> getAllReplies(@PathVariable("tweetId") int tweetId)  {
-
-            return sl.getRepliesForTweetId(tweetId);
+    public List<Reply> getAllReplies(@PathVariable("tweetId") int tweetId) throws DataPersistenceException {
+        return sl.getRepliesForTweetId(tweetId);
     }
 
     @GetMapping("/posts/{tweetId}")
-    public Tweet getTweetById(@PathVariable("tweetId") int tweetId)  {
+    public Tweet getTweetById(@PathVariable("tweetId") int tweetId) throws DataPersistenceException {
 
-            return sl.getTweetById(tweetId);
-
+        return sl.getTweetById(tweetId);
     }
 
     @GetMapping("/posts/name/{user_name}")
-    public List<Tweet> getTweetByUserName(@PathVariable ("user_name") String user_name){
-
-            return sl.getTweetByUserName(user_name);
-
+    public List<Tweet> getTweetByUserName(@PathVariable ("user_name") String user_name) throws DataPersistenceException {
+        return sl.getTweetByUserName(user_name);
     }
 
     @GetMapping("/replies/name/{user_name}")
-    public List<Reply> getReplyByUserName(@PathVariable ("user_name") String user_name)  {
-
-            return sl.getReplyByUserName(user_name);
-
+    public List<Reply> getReplyByUserName(@PathVariable ("user_name") String user_name) throws DataPersistenceException {
+        return sl.getReplyByUserName(user_name);
     }
 
     @DeleteMapping("/posts/{tweetId}")
-    public void deleteTweetById(@PathVariable("tweetId") int tweetId) {
-
-            sl.deleteTweetById(tweetId);
-
+    public void deleteTweetById(@PathVariable("tweetId") int tweetId) throws DataPersistenceException {
+        sl.deleteTweetById(tweetId);
     }
 
     @DeleteMapping("/replies/{tweetId}/{replyId}")
-    public void deleteReplyById(@PathVariable("tweetId") int tweetId, @PathVariable("replyId") int replyId)  {
-
-            sl.deleteReplyById(tweetId, replyId);
-
+    public void deleteReplyById(@PathVariable("tweetId") int tweetId, @PathVariable("replyId") int replyId) throws DataPersistenceException {
+        sl.deleteReplyById(tweetId, replyId);
     }
 
     @PutMapping("/posts/{tweetId}")
-    public void editTweetById(@PathVariable("tweetId") int tweetId, @RequestBody Tweet tweet)  {
-
-            sl.editTweetById(tweetId, tweet);
-
+    public void editTweetById(@PathVariable("tweetId") int tweetId, @RequestBody Tweet tweet) throws DataPersistenceException {
+        sl.editTweetById(tweetId, tweet);
     }
 
     @PutMapping("/replies/{tweetId}/{replyId}")
-    public void editReplyById(@PathVariable("tweetId") int tweetId, @PathVariable("replyId") int replyId, @RequestBody Reply reply)  {
-            sl.editReplyById(tweetId, replyId, reply);
-
+    public void editReplyById(@PathVariable("tweetId") int tweetId, @PathVariable("replyId") int replyId, @RequestBody Reply reply) throws DataPersistenceException {
+        sl.editReplyById(tweetId, replyId, reply);
     }
 }

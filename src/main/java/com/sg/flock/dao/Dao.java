@@ -13,10 +13,11 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.List;
+import org.springframework.stereotype.Component;
 
-
+@Component
 @Repository
-public class Dao {
+public class Dao  {
 
     private final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
     private final String user = "root";
@@ -25,8 +26,6 @@ public class Dao {
     private final String url = "jdbc:mysql://localhost:3306/mydb";
     DataSource dataSource = DataSourceFactory.createDataSource();
     private final JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-
-
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
 
@@ -68,7 +67,7 @@ public class Dao {
     }
 
 
-    public void insertTweet(Tweet tweet)  {
+    public void insertTweet(Tweet tweet) throws DataPersistenceException {
         LocalDateTime dateTime = LocalDateTime.now();
         String dateTimeStr = dateTime.format(formatter);
         tweet.setDate(dateTimeStr);
@@ -78,7 +77,7 @@ public class Dao {
     }
 
 
-    public void insertReply(Reply reply)  {
+    public void insertReply(Reply reply) throws DataPersistenceException {
         LocalDateTime dateTime = LocalDateTime.now();
         String dateTimeStr = dateTime.format(formatter);
         reply.setDate(dateTimeStr);
@@ -87,7 +86,7 @@ public class Dao {
     }
 
 
-    public void deleteTweetById(int id) {
+    public void deleteTweetById(int id) throws DataPersistenceException {
         Tweet tweet = getTweetById(id);
 
         String sql = "DELETE FROM `mydb`.`tweet` WHERE id = ?;";
@@ -96,26 +95,26 @@ public class Dao {
     }
 
 
-    public void editTweetById(int id, Tweet tweet)  {
+    public void editTweetById(int id, Tweet tweet) throws DataPersistenceException {
         String sql = "UPDATE `mydb`.`tweet` SET title = ?, post = ?, img = ? WHERE id = ?";
         jdbcTemplate.update(sql, tweet.getTitle(), tweet.getPost(), tweet.getImg(), id);
     }
 
 
-    public void deleteReplyById(int tweetId, int replyId)  {
+    public void deleteReplyById(int tweetId, int replyId) throws DataPersistenceException {
 
         String sql = "DELETE FROM `mydb`.`reply` WHERE tweet_id = ? AND id = ?;";
         jdbcTemplate.update(sql, tweetId, replyId);
     }
 
 
-    public void editReplyById(int tweetId, int replyId, Reply reply){
+    public void editReplyById(int tweetId, int replyId, Reply reply) throws DataPersistenceException {
         String sql = "UPDATE `mydb`.`reply` SET title = ?, post = ?, img = ? WHERE tweet_id = ? AND id = ?;";
         jdbcTemplate.update(sql, reply.getTitle(), reply.getPost(), reply.getImg(), tweetId, replyId);
     }
 
 
-    public Tweet getTweetById(int tweetId)  {
+    public Tweet getTweetById(int tweetId) throws DataPersistenceException {
         String sql = "SELECT * FROM tweet WHERE id = ?";
         Tweet tweet = jdbcTemplate.queryForObject(sql, new Object[]{tweetId}, new RowMapper<Tweet>() {
             @Override
@@ -134,7 +133,7 @@ public class Dao {
     }
 
 
-    public List<Tweet> getTweetByUserName(String user_name)  {
+    public List<Tweet> getTweetByUserName(String user_name) throws DataPersistenceException {
         String sql = "SELECT * FROM tweet WHERE user_name = ?";
         List<Tweet> tweets = jdbcTemplate.query(sql, new Object[]{user_name}, new RowMapper<Tweet>() {
             @Override
@@ -153,7 +152,7 @@ public class Dao {
     }
 
 
-    public List<Reply> getReplyByUserName(String user_name){
+    public List<Reply> getReplyByUserName(String user_name) throws DataPersistenceException {
         String sql = "SELECT * FROM reply WHERE user_name = ?";
         List<Reply> replies = jdbcTemplate.query(sql, new Object[]{user_name}, new RowMapper<Reply>() {
             @Override
@@ -173,7 +172,7 @@ public class Dao {
     }
 
 
-    public List<Tweet> getAllTweets()  {
+    public List<Tweet> getAllTweets() throws DataPersistenceException {
         String sql = "SELECT * FROM tweet";
         List<Tweet> tweets = jdbcTemplate.query(sql, new RowMapper<Tweet>() {
             @Override
@@ -192,7 +191,7 @@ public class Dao {
     }
 
 
-    public List<Reply> getAllReplies() {
+    public List<Reply> getAllReplies() throws DataPersistenceException {
         String sql = "SELECT * FROM reply";
         List<Reply> replies = jdbcTemplate.query(sql, new RowMapper<Reply>() {
             @Override
@@ -212,7 +211,7 @@ public class Dao {
     }
 
 
-    public List<Reply> getRepliesForTweetId(int tweetId){
+    public List<Reply> getRepliesForTweetId(int tweetId) throws DataPersistenceException {
         String sql = "SELECT * FROM reply WHERE tweet_id = ?";
         List<Reply> replies = jdbcTemplate.query(sql, new Object[]{tweetId}, new RowMapper<Reply>() {
             @Override
@@ -231,7 +230,7 @@ public class Dao {
         return replies;
     }
 
-    public List<Tweet> getTweetsWithReplies(){
+    public List<Tweet> getTweetsWithReplies() throws DataPersistenceException {
         String sql = "SELECT * FROM tweet t LEFT JOIN reply r ON t.id = r.tweet_id ORDER BY t.id, r.id";
         List<Tweet> tweets = new LinkedList<>();
 
@@ -283,7 +282,7 @@ public class Dao {
         return tweets;
     }
 
-    public List<String> convertTweetsToStrings(List<Tweet> tweets)  {
+    public List<String> convertTweetsToStrings(List<Tweet> tweets) throws DataPersistenceException {
         List<String> strings = new LinkedList<>();
 
         for (Tweet tweet : tweets) {
