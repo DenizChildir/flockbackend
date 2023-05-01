@@ -1,0 +1,84 @@
+.search-container {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 0;
+  gap: 10px;
+}
+
+input {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+}
+
+.results-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.searched-tweets,
+.searched-replies {
+  margin-bottom: 20px;
+}
+
+.tweet,
+.reply {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.tweet-header,
+.reply-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+img {
+  max-width: 800px;
+  height: auto;
+  object-fit: cover;
+}
+
+h3 {
+  margin: 0 0 10px 0;
+}
+
+.tweet-header .user_name, .reply-header .user_name {
+  font-size: 24px; /* Adjust font size as needed */
+}
+
+.tweet-header .date, .reply-header .date {
+  font-size: 24px; /* Adjust font size as needed */
+  text-align: right;
+}
+
+.tweet h3, .reply h3 {
+  font-size: 24px; /* Adjust font size as needed */
+}
+
+.tweet p, .reply p {
+  font-size: 24px; /* Adjust font size as needed */
+}

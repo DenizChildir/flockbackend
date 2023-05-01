@@ -1,0 +1,22 @@
+<app-nav></app-nav>
+
+<!-- Show authentication modal if user is not authenticated -->
+<app-auth-modal *ngIf="!(auth.isAuthenticatedWithDelay$ | async)"></app-auth-modal>
+
+<!-- Navigation links -->
+<nav class="main-nav">
+  <ul>
+    <li>
+      <a routerLink="/">Home</a>
+    </li>
+    <li>
+      <a routerLink="/search">Search</a>
+    </li>
+  </ul>
+</nav>
+
+<!-- Main content -->
+<main class="main-content">
+  <router-outlet></router-outlet>
+</main>
+

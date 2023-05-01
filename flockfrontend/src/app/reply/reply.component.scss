@@ -1,0 +1,275 @@
+//.reply {
+//  max-width: 800px;
+//  margin: 0 auto;
+//  padding: 20px 0;
+//}
+//
+//form {
+//  display: flex;
+//  flex-direction: column;
+//  gap: 10px;
+//  margin-bottom: 20px;
+//}
+//
+//input, textarea {
+//  padding: 10px;
+//  font-size: 16px;
+//  border: 1px solid #ccc;
+//  border-radius: 4px;
+//}
+//
+//button {
+//  padding: 10px 20px;
+//  font-size: 16px;
+//  cursor: pointer;
+//  background-color: #007bff;
+//  color: #fff;
+//  border: none;
+//  border-radius: 4px;
+//}
+//
+//.reply-item {
+//  background-color: #fff;
+//  padding: 20px;
+//  border-radius: 8px;
+//  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+//  margin-bottom: 20px;
+//}
+//
+//.reply-header {
+//  display: flex;
+//  justify-content: space-between;
+//  align-items: center;
+//  margin-bottom: 10px;
+//}
+//
+//.reply-image {
+//  max-width: 100%;
+//  max-height: 800px; /* Adjust this value as needed */
+//  height: auto;
+//  object-fit: contain;
+//}
+
+//
+//
+//.reply-header {
+//  display: flex;
+//  justify-content: space-between;
+//  align-items: center;
+//  margin-bottom: 10px;
+//  font-size: 14px; /* Adjust this value as needed */
+//}
+//
+//.reply-header span {
+//  display: inline-block;
+//  vertical-align: middle;
+//}
+//
+//h3 {
+//  font-size: 18px; /* Adjust this value as needed */
+//  margin-bottom: 10px;
+//}
+//
+//p {
+//  font-size: 16px; /* Adjust this value as needed */
+//  margin-bottom: 20px;
+//}
+//
+//button {
+//  padding: 10px 20px;
+//  font-size: 16px;
+//  cursor: pointer;
+//  background-color: #007bff;
+//  color: #fff;
+//  border: none;
+//  border-radius: 4px;
+//  margin-right: 10px; /* Add some space between buttons */
+//}
+//.user-name {
+//  font-size: 24px; // Adjust this value as needed
+//}
+//
+//.date {
+//  font-size: 24px; // Adjust this value as needed
+//}
+//
+//.title {
+//  font-size: 24px; // Adjust this value as needed
+//  margin-bottom: 10px;
+//}
+//
+//.post {
+//  font-size: 24px; // Adjust this value as needed
+//  margin-bottom: 20px;
+//}
+//.reply-image {
+//  display: block;
+//  max-width: 100%;
+//  height: auto;
+//  margin: 0 auto 20px;
+//  border-radius: 4px;
+//}
+
+
+
+
+
+//.reply-header {
+//  display: flex;
+//  justify-content: space-between;
+//  align-items: center;
+//  margin-bottom: 10px;
+//}
+//
+//.user-name {
+//  font-size: 24px; // Adjust this value as needed
+//}
+//
+//.date {
+//  font-size: 24px; // Adjust this value as needed
+//}
+//
+//.title {
+//  font-size: 24px; // Adjust this value as needed
+//  margin-bottom: 10px;
+//}
+//
+//.post {
+//  font-size: 24px; // Adjust this value as needed
+//  margin-bottom: 20px;
+//}
+//
+//button {
+//  padding: 10px 20px;
+//  font-size: 16px;
+//  cursor: pointer;
+//  background-color: #007bff;
+//  color: #fff;
+//  border: none;
+//  border-radius: 4px;
+//  margin-right: 10px; // Add some space between buttons
+//}
+//
+//.reply-item {
+//  position: relative;
+//  overflow: hidden;
+//}
+//
+//.reply-image {
+//  display: block;
+//  max-width: 100%;
+//  height: auto;
+//  margin: 0 auto 20px;
+//  border-radius: 4px;
+//}
+//.edit-reply-form {
+//  display: flex;
+//  flex-direction: column;
+//  margin-bottom: 20px;
+//}
+//
+//input[type="text"].edit-input,
+//textarea.edit-textarea {
+//  font-size: 16px;
+//  padding: 10px;
+//  border: 1px solid #ccc;
+//  border-radius: 4px;
+//  margin-bottom: 10px;
+//}
+//
+//.file-input {
+//  display: inline-block;
+//  margin-bottom: 10px;
+//}
+//
+//.save-btn,
+//.cancel-btn {
+//  background-color: #007bff;
+//  color: #fff;
+//  padding: 10px 20px;
+//  border: none;
+//  border-radius: 4px;
+//  font-size: 16px;
+//  cursor: pointer;
+//  margin-right: 10px;
+//}
+//
+//.cancel-btn {
+//  background-color: #ccc;
+//}
+
+.reply {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px 0;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+input, textarea {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  margin-right: 10px; // Added space between buttons
+}
+
+.reply-item {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.reply-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.reply-image {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto 20px;
+  border-radius: 4px;
+}
+
+.user-name, .date, .title, .post {
+  font-size: 24px; // Adjust this value as needed
+}
+
+.title {
+  margin-bottom: 10px;
+}
+
+.post {
+  margin-bottom: 20px;
+}
+
+button:last-child {
+  margin-right: 0; // Remove the extra margin from the last button
+}
+
+// Add a container for the buttons
+.buttons-container {
+  display: flex;
+}
+

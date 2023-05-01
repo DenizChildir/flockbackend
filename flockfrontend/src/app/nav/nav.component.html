@@ -1,0 +1,26 @@
+<header id="header" class="bg-blue-500">
+  <nav class="container mx-auto flex justify-start items-center py-8 px-4">
+    <!-- App Name -->
+    <a class="text-4xl text-white font-bold uppercase mr-4" routerLink="/">Flock</a>
+
+    <div class="flex flex-grow items-center">
+      <!-- Primary Navigation -->
+      <ul class="flex flex-row mt-1">
+        <!-- Navigation Links -->
+        <li *ngIf="!(auth.isAuthenticated$ | async); else authLinks">
+          <a class="px-2 text-white" href="#"
+             (click)="openModal($event)">
+            Login / Register
+          </a>
+        </li>
+        <ng-template #authLinks>
+          <li>
+            <a class="px-2 text-white" routerLink="text-indigo-400" (click)="auth.logout($event)">
+              Logout
+            </a>
+          </li>
+        </ng-template>
+      </ul>
+    </div>
+  </nav>
+</header>

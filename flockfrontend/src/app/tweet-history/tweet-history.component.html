@@ -1,0 +1,88 @@
+<!--<div class="tweet-history">-->
+<!--  <button *ngIf="!showCreateTweetForm" (click)="showCreateTweetForm = !showCreateTweetForm" class="toggle-tweet-form">Post Tweet</button>-->
+<!--  <app-create-tweet (tweetCreated)="loadTweets()" (tweetCanceled)="showCreateTweetForm = false" [showTweetForm]="showCreateTweetForm"></app-create-tweet>-->
+<!--  <div *ngFor="let tweet of tweets" class="tweet">-->
+<!--    <div class="tweet-header">-->
+<!--      <span>{{ tweet.user_name }}</span>-->
+<!--      <span>{{ tweet.date | date: 'MMM d, y, h:mm a z' }}</span>-->
+<!--    </div>-->
+<!--    <h3>{{ tweet.title }}</h3>-->
+<!--    <p>{{ tweet.post }}</p>-->
+<!--    <img *ngIf="tweet.img" [src]="tweet.img" alt="Tweet image"/>-->
+<!--    <div class="tweet-actions"> &lt;!&ndash; Added tweet-actions class &ndash;&gt;-->
+<!--      <button mat-button (click)="deleteTweet(tweet.id)">Delete</button>-->
+<!--      <button mat-button (click)="toggleEditMode(tweet)">Edit</button>-->
+<!--      <button mat-button (click)="toggleReplyForm(selectedTweetId ? selectedTweetId : tweet.id)">Reply</button>-->
+<!--    </div>-->
+<!--    <app-reply *ngIf="selectedTweetId === tweet.id" [tweetId]="tweet.id" [selectedTweetId]="selectedTweetId"></app-reply>-->
+
+<!--    <form *ngIf="tweet.editMode" [formGroup]="editTweetForm" class="edit-tweet-form"> &lt;!&ndash; Added edit-tweet-form class &ndash;&gt;-->
+<!--      <input formControlName="title" [(ngModel)]="tweet.title" placeholder="Title"/>-->
+<!--      <textarea formControlName="tweet" [(ngModel)]="tweet.post" placeholder="Tweet"></textarea>-->
+<!--      <div class="file-and-save"> &lt;!&ndash; Added file-and-save class &ndash;&gt;-->
+<!--        <input type="file" (change)="onFileSelected($event)"/>-->
+<!--        <button (click)="saveChanges(tweet)">Save</button>-->
+<!--      </div>-->
+<!--    </form>-->
+<!--  </div>-->
+<!--</div>-->
+
+<!--<div class="tweet-history">-->
+<!--  <button *ngIf="!showCreateTweetForm" (click)="showCreateTweetForm = !showCreateTweetForm" class="toggle-tweet-form">Post Tweet</button>-->
+<!--  <app-create-tweet (tweetCreated)="loadTweets()" (tweetCanceled)="showCreateTweetForm = false" [showTweetForm]="showCreateTweetForm"></app-create-tweet>-->
+<!--  <div *ngFor="let tweet of tweets" class="tweet">-->
+<!--    <div class="tweet-header">-->
+<!--      <span>{{ tweet.user_name }}</span>-->
+<!--      <span>{{ tweet.date | date: 'MMM d, y, h:mm a z' }}</span>-->
+<!--    </div>-->
+<!--    <h3>{{ tweet.title }}</h3>-->
+<!--    <p>{{ tweet.post }}</p>-->
+<!--    <img *ngIf="tweet.img" [src]="tweet.img" alt="Tweet image"/>-->
+<!--    <button mat-button (click)="deleteTweet(tweet.id)">Delete</button>-->
+<!--    <button mat-button (click)="toggleEditMode(tweet)">Edit</button>-->
+<!--    <button mat-button (click)="toggleReplyForm(tweet.id)">Reply</button>-->
+<!--    <app-reply [tweetId]="tweet.id" [selectedTweetId]="selectedTweetId"></app-reply>-->
+<!--    <form *ngIf="tweet.editMode" [formGroup]="editTweetForm">-->
+<!--      <input formControlName="title" [(ngModel)]="tweet.title" placeholder="Title"/>-->
+<!--      <textarea formControlName="tweet" [(ngModel)]="tweet.post" placeholder="Tweet"></textarea>-->
+<!--      <div>-->
+<!--        <input type="file" (change)="onFileSelected($event)"/>-->
+<!--        <button (click)="saveChanges(tweet)">Save</button>-->
+<!--      </div>-->
+<!--    </form>-->
+<!--  </div>-->
+<!--</div>-->
+
+<div class="tweet-history">
+  <button *ngIf="!showCreateTweetForm" (click)="showCreateTweetForm = !showCreateTweetForm" class="toggle-tweet-form">Post Tweet</button>
+  <app-create-tweet (tweetCreated)="loadTweets()" (tweetCanceled)="showCreateTweetForm = false" [showTweetForm]="showCreateTweetForm"></app-create-tweet>
+  <div *ngFor="let tweet of tweets" class="tweet">
+    <div class="tweet-header">
+      <span>{{ tweet.user_name }}</span>
+      <span>{{ tweet.date | date: 'MMM d, y, h:mm a z' }}</span>
+    </div>
+    <h3>{{ tweet.title }}</h3>
+    <p>{{ tweet.post }}</p>
+    <div class="tweet-img-wrapper" *ngIf="tweet.img">
+      <img [src]="tweet.img" alt="Tweet image"/>
+    </div>
+    <button mat-button (click)="deleteTweet(tweet.id)">Delete</button>
+    <button mat-button (click)="toggleEditMode(tweet)">Edit</button>
+    <button mat-button (click)="toggleReplyForm(tweet.id)">Reply</button>
+    <app-reply [tweetId]="tweet.id" [selectedTweetId]="selectedTweetId"></app-reply>
+    <form *ngIf="tweet.editMode" [formGroup]="editTweetForm">
+      <input formControlName="title" [(ngModel)]="tweet.title" placeholder="Title"/>
+      <textarea formControlName="tweet" [(ngModel)]="tweet.post" placeholder="Tweet"></textarea>
+      <div>
+        <input type="file" (change)="onFileSelected($event)"/>
+        <button (click)="saveChanges(tweet)">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<!--I want to both edit and see replies. if I remove  *ngIf="selectedTweetId === tweet.id", I can not edit.-->
+<!--if I leave it, I can not see replies-->
+
+

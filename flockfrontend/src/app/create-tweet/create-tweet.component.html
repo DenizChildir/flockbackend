@@ -1,0 +1,22 @@
+<div *ngIf="showTweetForm" class="tweet-form-container" (click)="$event.stopPropagation()" class="form-wrapper">
+  <form (ngSubmit)="createTweet()" #tweetForm="ngForm">
+    <input type="text" placeholder="Username" [(ngModel)]="tweet.user_name" name="user_name" required>
+    <input type="text" placeholder="Title" [(ngModel)]="tweet.title" name="title" required>
+    <textarea placeholder="Post" [(ngModel)]="tweet.post" name="post" required></textarea>
+    <!-- Added a class to the image-container -->
+    <div class="image-container upload-image-container">
+      <div *ngIf="imageData" class="image-preview-container">
+        <img [src]="imageData" alt="Image Preview" class="image-preview"/>
+      </div>
+      <label class="input-file-btn">
+        <span>{{ imageData ? 'Change' : 'Add' }} Image</span>
+        <input type="file" (change)="onFileSelected($event)" style="display: none;"/>
+      </label>
+    </div>
+    <!-- Added a class to the button-container -->
+    <div class="button-container form-buttons">
+      <button type="submit">Quack</button>
+      <button type="button" (click)="onCancel()">Cancel</button>
+    </div>
+  </form>
+</div>

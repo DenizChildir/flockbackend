@@ -1,0 +1,38 @@
+<div class="reply">
+  <form *ngIf="selectedTweetId === tweetId" (ngSubmit)="createReply()" #replyForm="ngForm">
+    <input type="text" placeholder="Username" [(ngModel)]="reply.user_name" name="user_name" required>
+    <input type="text" placeholder="Title" [(ngModel)]="reply.title" name="title" required>
+    <textarea placeholder="Reply" [(ngModel)]="reply.post" name="post" required></textarea>
+    <input type="file" (change)="onFileSelected($event)"/>
+    <button type="submit">Post Reply</button>
+    <button type="button" (click)="selectedTweetId = null">Cancel</button>
+  </form>
+
+  <div *ngFor="let reply of replies | orderBy: 'id':true" class="reply-item">
+    <div class="reply-header">
+      <span class="user-name">{{ reply.user_name }}</span>
+      <span class="date">{{ reply.date | date: 'MMM d, y, h:mm a z' }}</span>
+    </div>
+    <h3 class="title">{{ reply.title }}</h3>
+    <p class="post">{{ reply.post }}</p>
+    <img *ngIf="reply.img" [src]="reply.img" alt="Reply image" class="reply-image"/>
+    <div class="buttons-container">
+      <button mat-button (click)="deleteReply(reply.id)">Delete</button>
+      <button mat-button (click)="toggleEditMode(reply)">Edit</button>
+    </div>
+
+    <form *ngIf="reply.editMode" [formGroup]="editReplyForm" class="edit-reply-form">
+      <input formControlName="title" [(ngModel)]="reply.title" placeholder="Title" class="edit-input"/>
+      <textarea formControlName="reply" [(ngModel)]="reply.post" placeholder="Reply" class="edit-textarea"></textarea>
+      <div class="file-input">
+        <input type="file" (change)="onFileSelected($event)"/>
+      </div>
+      <div>
+        <button class="save-btn" (click)="saveChanges(reply)">Save</button>
+<!--        <button class="cancel-btn" (click)="cancelChanges(reply)">Cancel</button>-->
+      </div>
+    </form>
+
+  </div>
+</div>
+
