@@ -9,7 +9,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.sg.flock.dao.Dao;
-import com.sg.flock.dao.DataPersistenceException;
+
+
 import com.sg.flock.dto.Reply;
 import com.sg.flock.dto.Tweet;
 
@@ -44,70 +45,61 @@ public class Controller {
 
     @PostMapping("/posts")
     @ResponseStatus(HttpStatus.CREATED)
-    public void createPost(@RequestBody Tweet tweet) throws DataPersistenceException, TweetValidationException {
+    public void createPost(@RequestBody Tweet tweet)  {
         // Insert the tweet into the database
         sl.insertTweet(tweet);
     }
 
     @PostMapping("/replies")
-    public void createReply(@RequestBody Reply reply) throws DataPersistenceException, ReplyValidationException {
-        // Perform validation checks on the tweet object
-//        if (reply.getPost() == null || reply.getPost().isEmpty()) {
-//            throw new ReplyValidationException("reply message cannot be empty");
-//        }
-//        if (reply.getPost().length() > 280) {
-//            throw new ReplyValidationException("reply message length cannot exceed 280 characters");
-//        }
-
-        // Insert the tweet into the database
+    public void createReply(@RequestBody Reply reply)  {
         sl.insertReply(reply);
     }
 
     @GetMapping("/posts")
-    public List<Tweet> getAllPosts() throws DataPersistenceException {
+    public List<Tweet> getAllPosts() {
         List<Tweet> ret = sl.getAllTweets();
         Collections.reverse(ret);
         return ret;
     }
 
     @GetMapping("/replies/{tweetId}")
-    public List<Reply> getAllReplies(@PathVariable("tweetId") int tweetId) throws DataPersistenceException {
+    public List<Reply> getAllReplies(@PathVariable("tweetId") int tweetId)  {
         return sl.getRepliesForTweetId(tweetId);
     }
 
     @GetMapping("/posts/{tweetId}")
-    public Tweet getTweetById(@PathVariable("tweetId") int tweetId) throws DataPersistenceException {
+    public Tweet getTweetById(@PathVariable("tweetId") int tweetId)  {
 
         return sl.getTweetById(tweetId);
     }
 
     @GetMapping("/posts/name/{user_name}")
-    public List<Tweet> getTweetByUserName(@PathVariable ("user_name") String user_name) throws DataPersistenceException {
+    public List<Tweet> getTweetByUserName(@PathVariable ("user_name") String user_name) {
         return sl.getTweetByUserName(user_name);
     }
 
     @GetMapping("/replies/name/{user_name}")
-    public List<Reply> getReplyByUserName(@PathVariable ("user_name") String user_name) throws DataPersistenceException {
+    public List<Reply> getReplyByUserName(@PathVariable ("user_name") String user_name) {
         return sl.getReplyByUserName(user_name);
     }
 
     @DeleteMapping("/posts/{tweetId}")
-    public void deleteTweetById(@PathVariable("tweetId") int tweetId) throws DataPersistenceException {
+    public void deleteTweetById(@PathVariable("tweetId") int tweetId)  {
         sl.deleteTweetById(tweetId);
     }
 
     @DeleteMapping("/replies/{tweetId}/{replyId}")
-    public void deleteReplyById(@PathVariable("tweetId") int tweetId, @PathVariable("replyId") int replyId) throws DataPersistenceException {
+    public void deleteReplyById(@PathVariable("tweetId") int tweetId, @PathVariable("replyId") int replyId) {
         sl.deleteReplyById(tweetId, replyId);
     }
 
     @PutMapping("/posts/{tweetId}")
-    public void editTweetById(@PathVariable("tweetId") int tweetId, @RequestBody Tweet tweet) throws DataPersistenceException {
+    public void editTweetById(@PathVariable("tweetId") int tweetId, @RequestBody Tweet tweet)  {
         sl.editTweetById(tweetId, tweet);
     }
 
     @PutMapping("/replies/{tweetId}/{replyId}")
-    public void editReplyById(@PathVariable("tweetId") int tweetId, @PathVariable("replyId") int replyId, @RequestBody Reply reply) throws DataPersistenceException {
+    public void editReplyById(@PathVariable("tweetId") int tweetId, @PathVariable("replyId") int replyId, @RequestBody Reply reply) {
         sl.editReplyById(tweetId, replyId, reply);
     }
 }
