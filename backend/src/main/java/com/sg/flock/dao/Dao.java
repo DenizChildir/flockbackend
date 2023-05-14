@@ -4,93 +4,90 @@ import com.sg.flock.dto.Reply;
 import com.sg.flock.dto.Tweet;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.List;
-import org.springframework.stereotype.Component;
 
 @Component
 @Repository
 public class Dao  {
-    private final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-    private final String user = "root";
-    private final String pass = "uuuu";
+    private final String JDBC_DRIVER = "org.h2.Driver";
     private final String dbName = "mydb";
-    private final String url = "jdbc:mysql://localhost:3306/mydb";
-    DataSource dataSource = DataSourceFactory.createDataSource();
-    private final JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    private final String url = "jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1";
+    private final String user = "sa";
+    private final String pass = "";
+    private DataSource dataSource;
+    private JdbcTemplate jdbcTemplate;
+
+    public Dao() {
+        this.dataSource = createDataSource();
+        this.jdbcTemplate = new JdbcTemplate(dataSource);
+    }
+
+    private DataSource createDataSource() {
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName(JDBC_DRIVER);
+        dataSource.setUrl("jdbc:h2:mem:" + dbName + ";DB_CLOSE_DELAY=-1");
+        dataSource.setUsername(user);
+        dataSource.setPassword(pass);
+        return dataSource;
+    }
+
     public void createTables() {
-        String createDbSql = "CREATE DATABASE IF NOT EXISTS " + dbName;
-        jdbcTemplate.execute(createDbSql);
-        jdbcTemplate.execute("USE " + dbName);
-        String tweetTableSql = "CREATE TABLE IF NOT EXISTS `mydb`.`tweet` (\n"
-                + "  `id` INT NOT NULL AUTO_INCREMENT,\n"
+        String tweetTableSql = "CREATE TABLE IF NOT EXISTS `tweet` (\n"
+                + "  `id` INT AUTO_INCREMENT PRIMARY KEY,\n"
                 + "  `user_name` VARCHAR(300) NOT NULL,\n"
                 + "  `title` TEXT NULL,\n"
                 + "  `post` TEXT NULL,\n"
                 + "  `img` LONGTEXT NULL,\n"
-                + "  `date` TEXT NULL,\n"
-                + "  PRIMARY KEY (`id`))\n"
-                + "ENGINE = InnoDB;";
+                + "  `date` TIMESTAMP NULL\n"
+                + ");";
         jdbcTemplate.execute(tweetTableSql);
-        String replyTableSql = "CREATE TABLE IF NOT EXISTS `mydb`.`reply` (\n"
-                + "  `id` INT NOT NULL AUTO_INCREMENT,\n"
+        String replyTableSql = "CREATE TABLE IF NOT EXISTS `reply` (\n"
+                + "  `id` INT AUTO_INCREMENT PRIMARY KEY,\n"
                 + "  `tweet_id` INT NOT NULL,\n"
                 + "  `user_name` VARCHAR(300) NULL,\n"
                 + "  `title` TEXT NULL,\n"
                 + "  `post` TEXT NULL,\n"
                 + "  `img` LONGTEXT NULL,\n"
-                + "  `date` TEXT NULL,\n"
-                + "  PRIMARY KEY (`id`),\n"
-                + "  INDEX `key_idx` (`tweet_id` ASC),\n"
-                + "  CONSTRAINT `key`\n"
-                + "    FOREIGN KEY (`tweet_id`)\n"
-                + "    REFERENCES `mydb`.`tweet` (`id`)\n"
-                + "    ON DELETE CASCADE\n"
-                + " ) ENGINE = InnoDB;";
+                + "  `date` TIMESTAMP NULL,\n"
+                + "  FOREIGN KEY (`tweet_id`) REFERENCES `tweet` (`id`)\n"
+                + ");";
         jdbcTemplate.execute(replyTableSql);
         System.out.println("Tables created successfully.");
     }
     public void insertTweet(Tweet tweet) {
-        LocalDateTime dateTime = LocalDateTime.now();
-        String dateTimeStr = dateTime.format(formatter);
-        tweet.setDate(dateTimeStr);
-        String insertTweetSql = "INSERT INTO `mydb`.`tweet` (`user_name`, `title`, `post`, `img`, `date`) VALUES (?, ?, ?, ?, ?)";
-
-        jdbcTemplate.update(insertTweetSql, tweet.getUser_name(), tweet.getTitle(), tweet.getPost(), tweet.getImage(), tweet.getDate());
+        String insertTweetSql = "INSERT INTO `tweet` (`user_name`, `title`, `post`, `img`, `date`) VALUES (?, ?, ?, ?, ?)";
+        jdbcTemplate.update(insertTweetSql, tweet.getUser_name(), tweet.getTitle(), tweet.getPost(), tweet.getImage(), Timestamp.valueOf(LocalDateTime.now()));
     }
     public void insertReply(Reply reply) {
-        LocalDateTime dateTime = LocalDateTime.now();
-        String dateTimeStr = dateTime.format(formatter);
-        reply.setDate(dateTimeStr);
         String sql = "INSERT INTO reply (tweet_id, user_name, title, post, img, date) VALUES (?, ?, ?, ?, ?, ?)";
-        jdbcTemplate.update(sql, reply.getTweet_id(), reply.getUserName(), reply.getTitle(), reply.getPost(), reply.getImg(), reply.getDate());
+        jdbcTemplate.update(sql, reply.getTweet_id(), reply.getUserName(), reply.getTitle(), reply.getPost(), reply.getImg(), Timestamp.valueOf(LocalDateTime.now()));
     }
     public void deleteTweetById(int id)  {
-        Tweet tweet = getTweetById(id);
-
-        String sql = "DELETE FROM `mydb`.`tweet` WHERE id = ?;";
+        String sql = "DELETE FROM `tweet` WHERE id = ?;";
         jdbcTemplate.update(sql, id);
-
     }
     public void editTweetById(int id, Tweet tweet) {
-        String sql = "UPDATE `mydb`.`tweet` SET title = ?, post = ?, img = ? WHERE id = ?";
+        String sql = "UPDATE `tweet` SET title = ?, post = ?, img = ? WHERE id = ?";
         jdbcTemplate.update(sql, tweet.getTitle(), tweet.getPost(), tweet.getImg(), id);
     }
     public void deleteReplyById(int tweetId, int replyId) {
-
-        String sql = "DELETE FROM `mydb`.`reply` WHERE tweet_id = ? AND id = ?;";
+        String sql = "DELETE FROM `reply` WHERE tweet_id = ? AND id = ?;";
         jdbcTemplate.update(sql, tweetId, replyId);
     }
     public void editReplyById(int tweetId, int replyId, Reply reply)  {
-        String sql = "UPDATE `mydb`.`reply` SET title = ?, post = ?, img = ? WHERE tweet_id = ? AND id = ?;";
+        String sql = "UPDATE `reply` SET title = ?, post = ?, img = ? WHERE tweet_id = ? AND id = ?;";
         jdbcTemplate.update(sql, reply.getTitle(), reply.getPost(), reply.getImg(), tweetId, replyId);
     }
     public Tweet getTweetById(int tweetId)  {
@@ -104,7 +101,7 @@ public class Dao  {
                 tweet.setTitle(rs.getString("title"));
                 tweet.setPost(rs.getString("post"));
                 tweet.setImage(rs.getString("img"));
-                tweet.setDate(rs.getString("date"));
+                tweet.setDate(rs.getTimestamp("date").toLocalDateTime().toString());
                 return tweet;
             }
         });
@@ -121,7 +118,7 @@ public class Dao  {
                 tweet.setTitle(rs.getString("title"));
                 tweet.setPost(rs.getString("post"));
                 tweet.setImage(rs.getString("img"));
-                tweet.setDate(rs.getString("date"));
+                tweet.setDate(rs.getTimestamp("date").toLocalDateTime().toString());
                 return tweet;
             }
         });
@@ -139,7 +136,7 @@ public class Dao  {
                 reply.setTitle(rs.getString("title"));
                 reply.setPost(rs.getString("post"));
                 reply.setImg(rs.getString("img"));
-                reply.setDate(rs.getString("date"));
+                reply.setDate(rs.getTimestamp("date").toLocalDateTime().toString());
                 return reply;
             }
         });
@@ -156,7 +153,7 @@ public class Dao  {
                 tweet.setTitle(rs.getString("title"));
                 tweet.setPost(rs.getString("post"));
                 tweet.setImage(rs.getString("img"));
-                tweet.setDate(rs.getString("date"));
+                tweet.setDate(rs.getTimestamp("date").toLocalDateTime().toString());
                 return tweet;
             }
         });
@@ -174,7 +171,7 @@ public class Dao  {
                 reply.setTitle(rs.getString("title"));
                 reply.setPost(rs.getString("post"));
                 reply.setImg(rs.getString("img"));
-                reply.setDate(rs.getString("date"));
+                reply.setDate(rs.getTimestamp("date").toLocalDateTime().toString());
                 return reply;
             }
         });
@@ -192,7 +189,7 @@ public class Dao  {
                 reply.setTitle(rs.getString("title"));
                 reply.setPost(rs.getString("post"));
                 reply.setImg(rs.getString("img"));
-                reply.setDate(rs.getString("date"));
+                reply.setDate(rs.getTimestamp("date").toLocalDateTime().toString());
                 return reply;
             }
         });
@@ -218,7 +215,7 @@ public class Dao  {
                     currentTweet.setTitle(rs.getString("t.title"));
                     currentTweet.setPost(rs.getString("t.post"));
                     currentTweet.setImage(rs.getString("t.img"));
-                    currentTweet.setDate(rs.getString("t.date"));
+                    currentTweet.setDate(rs.getTimestamp("t.date").toLocalDateTime().toString());
                     currentReplies = new LinkedList<>();
                     currentTweetId = tweetId;
                 }
@@ -230,7 +227,7 @@ public class Dao  {
                     reply.setTitle(rs.getString("r.title"));
                     reply.setPost(rs.getString("r.post"));
                     reply.setImg(rs.getString("r.img"));
-                    reply.setDate(rs.getString("r.date"));
+                    reply.setDate(rs.getTimestamp("r.date").toLocalDateTime().toString());
                     currentReplies.add(reply);
                 }
             }
@@ -263,6 +260,7 @@ public class Dao  {
         }
         return strings;
     }
+
     public void clearReplyTable() {
         final String sql = "DELETE FROM reply where id > 0";
         jdbcTemplate.update(sql);
